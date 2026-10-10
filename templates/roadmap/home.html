@@ -11,14 +11,15 @@
       <a class="button ghost" href="{% url 'roadmap:projects' %}">Build a project</a>
     </div>
   </div>
-  <div class="hero-map" aria-label="Learning path preview">
+  <nav class="hero-map" aria-label="Choose a learning stage">
     <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
-    <div class="map-point origin"><span>01</span><strong>Python</strong></div>
-    <div class="map-point data"><span>02</span><strong>Data</strong></div>
-    <div class="map-point ml"><span>03</span><strong>ML</strong></div>
-    <div class="map-point ai"><span>04</span><strong>AI systems</strong></div>
-    <svg viewBox="0 0 500 420" aria-hidden="true"><path d="M72 315C135 285 115 178 205 194s83 106 165 65 27-131 82-167"/><path d="M83 327c96 40 188 19 240-36"/></svg>
-  </div>
+    <a class="map-point origin" href="{% url 'roadmap:chapter' 'python-foundations' %}" aria-label="Open Python foundations"><span>01</span><strong>Python</strong></a>
+    <a class="map-point data" href="{% url 'roadmap:chapter' 'numpy-pandas' %}" aria-label="Open data foundations"><span>02</span><strong>Data</strong></a>
+    <a class="map-point ml" href="{% url 'roadmap:chapter' 'machine-learning-foundations' %}" aria-label="Open machine learning foundations"><span>03</span><strong>ML</strong></a>
+    <a class="map-point ai" href="{% url 'roadmap:chapter' 'large-language-models' %}" aria-label="Open AI systems"><span>04</span><strong>AI systems</strong></a>
+    <svg viewBox="0 0 500 420" aria-hidden="true"><path class="route-main" d="M72 315C135 285 115 178 205 194s83 106 165 65 27-131 82-167"/><path class="route-shortcut" d="M83 327c96 40 188 19 240-36"/></svg>
+    <span class="map-hint">Choose a stage <b>↗</b></span>
+  </nav>
   <div class="hero-stats">
     <div><strong>{{ chapter_count }}</strong><span>focused chapters</span></div>
     <div><strong>{{ topic_count }}</strong><span>guided topics</span></div>

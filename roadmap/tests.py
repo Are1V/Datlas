@@ -44,6 +44,11 @@ class PageTests(SimpleTestCase):
         self.assertContains(response, "Large language models")
         self.assertContains(response, "YouTube")
 
+    def test_homepage_map_links_to_learning_stages(self):
+        response = self.client.get(reverse("roadmap:home"))
+        for slug in ["python-foundations", "numpy-pandas", "machine-learning-foundations", "large-language-models"]:
+            self.assertContains(response, reverse("roadmap:chapter", args=[slug]))
+
     def test_project_cards_link_to_external_sources(self):
         response = self.client.get(reverse("roadmap:projects"))
         self.assertContains(response, 'class="project-card"', count=23)
