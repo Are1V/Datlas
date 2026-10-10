@@ -42,7 +42,8 @@ class PageTests(SimpleTestCase):
     def test_chapter_renders_video_links(self):
         response = self.client.get(reverse("roadmap:chapter", args=["large-language-models"]))
         self.assertContains(response, "Large language models")
-        self.assertContains(response, "YouTube")
+        self.assertContains(response, "data-watch-topic", count=20)
+        self.assertContains(response, "https://www.youtube.com/")
 
     def test_homepage_map_links_to_learning_stages(self):
         response = self.client.get(reverse("roadmap:home"))
@@ -52,13 +53,17 @@ class PageTests(SimpleTestCase):
     def test_roadmap_renders_progress_and_filter_controls(self):
         response = self.client.get(reverse("roadmap:roadmap"))
         self.assertContains(response, "data-phase-card", count=38)
+        self.assertContains(response, "data-chapter-id", count=38)
         self.assertContains(response, "data-roadmap-search")
         self.assertContains(response, "data-progress-reset")
+        self.assertNotContains(response, "Mark done")
 
-    def test_chapter_renders_topic_progress_controls(self):
+    def test_chapter_completion_is_driven_by_watched_videos(self):
         response = self.client.get(reverse("roadmap:chapter", args=["python-foundations"]))
-        self.assertContains(response, 'class="topic-check"', count=33)
+        self.assertContains(response, "data-watch-topic", count=33)
+        self.assertContains(response, "data-topic-id", count=33)
         self.assertContains(response, "data-chapter-progress")
+        self.assertNotContains(response, "Mark chapter complete")
 
     def test_projects_render_filter_control(self):
         response = self.client.get(reverse("roadmap:projects"))

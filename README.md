@@ -2,7 +2,7 @@
 
 **The open roadmap to Data Science.**
 
-Datlas is a server-rendered Django learning platform with 38 connected chapters, 676 guided topics, curated video lessons, and 23 practical projects. It includes browser-saved chapter and topic progress, instant roadmap and project filtering, and global search. Every project card opens its real external dataset or project source on services such as Kaggle, GitHub, UCI, OpenML, and Hugging Face.
+Datlas is a server-rendered Django learning platform with 38 connected chapters, 676 guided topics, curated video lessons, and 23 practical projects. It records watched lessons in the browser and completes a chapter only after every lesson video has been opened. It also includes instant roadmap and project filtering and global search. Every project card opens its real external dataset or project source on services such as Kaggle, GitHub, UCI, OpenML, and Hugging Face.
 
 ## Stack
 

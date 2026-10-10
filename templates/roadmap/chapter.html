@@ -7,19 +7,19 @@
   <h1>{{ phase.title }}</h1>
   <p>{{ phase.description }}</p>
   <div class="chapter-progress" data-chapter-progress data-chapter-id="chapter:{{ phase.id }}" data-topic-total="{{ phase.topics|length }}">
-    <div><strong data-chapter-progress-text>0 of {{ phase.topics|length }} topics complete</strong><span>Saved on this device</span></div>
+    <div><strong data-chapter-progress-text>0 of {{ phase.topics|length }} videos watched</strong><span>Each lesson is recorded when you open its video</span></div>
     <div class="progress-track"><span data-chapter-progress-bar></span></div>
-    <button class="completion-toggle chapter-complete" type="button" data-progress-id="chapter:{{ phase.id }}" aria-pressed="false"><span class="check-icon">✓</span><span class="progress-label">Mark chapter complete</span></button>
+    <span class="chapter-state" data-chapter-state><span>○</span>In progress</span>
   </div>
 </section>
 <section class="topic-list shell">
   {% for topic in phase.topics %}
   <article class="topic-row" id="{{ topic.id }}">
-    <div class="topic-marker"><button class="topic-check" type="button" data-progress-id="topic:{{ topic.id }}" aria-label="Mark {{ topic.title }} complete" aria-pressed="false"><span>✓</span></button><span class="topic-index">{{ forloop.counter|stringformat:'02d' }}</span></div>
+    <div class="topic-marker"><span class="topic-watch-status" data-topic-id="topic:{{ topic.id }}" aria-label="{{ topic.title }} not watched"><span>✓</span></span><span class="topic-index">{{ forloop.counter|stringformat:'02d' }}</span></div>
     <div class="topic-copy"><h2>{{ topic.title }}</h2><p>{{ topic.summary }}</p></div>
     {% if topic.video_url %}
-    <a class="watch" href="{{ topic.video_url }}" target="_blank" rel="noreferrer" aria-label="Watch {{ topic.title }} on YouTube">
-      <span class="play">▶</span><span><small>WATCH</small>{{ topic.video.channel }}</span><b>↗</b>
+    <a class="watch" data-watch-topic="topic:{{ topic.id }}" href="{{ topic.video_url }}" target="_blank" rel="noreferrer" aria-label="Watch {{ topic.title }} lesson">
+      <span class="play">▶</span><span><small data-watch-label>WATCH LESSON</small>{{ topic.video.channel }}</span><b>↗</b>
     </a>
     {% endif %}
   </article>

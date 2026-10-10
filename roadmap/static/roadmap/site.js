@@ -1,5 +1,5 @@
 (() => {
-  const STORAGE_KEY = "datlas-progress-v1";
+  const STORAGE_KEY = "datlas-progress-v2";
 
   const readProgress = () => {
     try {
@@ -20,28 +20,10 @@
     }
   };
 
-  const setPressed = (button, complete) => {
-    button.setAttribute("aria-pressed", String(complete));
-    button.classList.toggle("is-complete", complete);
-    const label = button.querySelector(".progress-label");
-    if (label) {
-      label.textContent = complete
-        ? (button.classList.contains("chapter-complete") ? "Chapter completed" : "Completed")
-        : (button.classList.contains("chapter-complete") ? "Mark chapter complete" : "Mark done");
-    }
-    const card = button.closest("[data-phase-card]");
-    if (card) card.classList.toggle("is-complete", complete);
-    const topic = button.closest(".topic-row");
-    if (topic) topic.classList.toggle("is-complete", complete);
-  };
-
   const updateRoadmapSummary = () => {
     const cards = [...document.querySelectorAll("[data-phase-card]")];
     if (!cards.length) return;
-    const complete = cards.filter((card) => {
-      const button = card.querySelector("[data-progress-id]");
-      return button && progress.has(button.dataset.progressId);
-    }).length;
+    const complete = cards.filter((card) => progress.has(card.dataset.chapterId)).length;
     const text = document.querySelector("[data-roadmap-progress]");
     const bar = document.querySelector("[data-roadmap-progress-bar]");
     if (text) text.textContent = `${complete} of ${cards.length} chapters`;
@@ -51,34 +33,53 @@
   const updateChapterSummary = () => {
     const panel = document.querySelector("[data-chapter-progress]");
     if (!panel) return;
-    const topicButtons = [...document.querySelectorAll('.topic-check[data-progress-id]')];
-    const complete = topicButtons.filter((button) => progress.has(button.dataset.progressId)).length;
-    const total = topicButtons.length;
+    const topics = [...document.querySelectorAll("[data-topic-id]")];
+    const complete = topics.filter((topic) => progress.has(topic.dataset.topicId)).length;
+    const total = topics.length;
+    const chapterComplete = total > 0 && complete === total;
+    const chapterId = panel.dataset.chapterId;
+    const progressChanged = progress.has(chapterId) !== chapterComplete;
+    chapterComplete ? progress.add(chapterId) : progress.delete(chapterId);
+    if (progressChanged) saveProgress();
     const text = panel.querySelector("[data-chapter-progress-text]");
     const bar = panel.querySelector("[data-chapter-progress-bar]");
-    if (text) text.textContent = `${complete} of ${total} topics complete`;
+    const state = panel.querySelector("[data-chapter-state]");
+    if (text) text.textContent = `${complete} of ${total} videos watched`;
     if (bar) bar.style.width = `${total ? (complete / total) * 100 : 0}%`;
+    if (state) {
+      state.classList.toggle("is-complete", chapterComplete);
+      state.innerHTML = chapterComplete ? "<span>✓</span>Chapter completed" : "<span>○</span>In progress";
+    }
   };
 
   const renderProgress = () => {
-    document.querySelectorAll("[data-progress-id]").forEach((button) => {
-      setPressed(button, progress.has(button.dataset.progressId));
+    document.querySelectorAll("[data-phase-card]").forEach((card) => {
+      const complete = progress.has(card.dataset.chapterId);
+      card.classList.toggle("is-complete", complete);
+      const status = card.querySelector("[data-phase-status]");
+      if (status) status.innerHTML = complete ? "<span>✓</span>Completed" : "<span>○</span>Watch lessons";
     });
-    updateRoadmapSummary();
+    document.querySelectorAll("[data-topic-id]").forEach((status) => {
+      const complete = progress.has(status.dataset.topicId);
+      status.classList.toggle("is-complete", complete);
+      status.setAttribute("aria-label", complete ? "Video watched" : "Video not watched");
+      const row = status.closest(".topic-row");
+      if (row) row.classList.toggle("is-complete", complete);
+      const watch = row?.querySelector("[data-watch-topic]");
+      if (watch) {
+        watch.classList.toggle("is-watched", complete);
+        const label = watch.querySelector("[data-watch-label]");
+        if (label) label.textContent = complete ? "WATCHED" : "WATCH LESSON";
+      }
+    });
     updateChapterSummary();
+    updateRoadmapSummary();
   };
 
   document.addEventListener("click", (event) => {
-    const button = event.target.closest("button[data-progress-id]");
-    if (!button) return;
-    const id = button.dataset.progressId;
-    const completing = !progress.has(id);
-    if (button.classList.contains("chapter-complete")) {
-      document.querySelectorAll('.topic-check[data-progress-id]').forEach((topicButton) => {
-        completing ? progress.add(topicButton.dataset.progressId) : progress.delete(topicButton.dataset.progressId);
-      });
-    }
-    completing ? progress.add(id) : progress.delete(id);
+    const watch = event.target.closest("a[data-watch-topic]");
+    if (!watch) return;
+    progress.add(watch.dataset.watchTopic);
     saveProgress();
     renderProgress();
     document.dispatchEvent(new CustomEvent("datlas:progress"));
@@ -94,8 +95,7 @@
     const query = (roadmapSearch?.value || "").trim().toLocaleLowerCase();
     let visibleCount = 0;
     phaseCards.forEach((card) => {
-      const button = card.querySelector("[data-progress-id]");
-      const complete = Boolean(button && progress.has(button.dataset.progressId));
+      const complete = progress.has(card.dataset.chapterId);
       const matchesText = !query || card.dataset.search.toLocaleLowerCase().includes(query);
       const matchesStatus = activeFilter === "all" || (activeFilter === "complete" ? complete : !complete);
       card.hidden = !(matchesText && matchesStatus);
