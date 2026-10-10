@@ -22,9 +22,9 @@ class ContentTests(SimpleTestCase):
 
     def test_every_project_has_an_external_source(self):
         self.assertEqual(len(projects()), 23)
-        self.assertTrue(
-            all("github.com/Are1V/Datlas/tree/main/project-guides/" in item["external_url"] for item in projects())
-        )
+        self.assertTrue(all(item["external_url"] == item["datasetUrl"] for item in projects()))
+        self.assertTrue(all("github.com/Are1V/Datlas" not in item["external_url"] for item in projects()))
+        self.assertTrue(all(item["platform"] != "Original source" for item in projects()))
 
     def test_search_finds_topics_and_projects(self):
         self.assertTrue(any(item["title"] == "Transformers" for item in search("transformers")))
@@ -47,7 +47,9 @@ class PageTests(SimpleTestCase):
     def test_project_cards_link_to_external_sources(self):
         response = self.client.get(reverse("roadmap:projects"))
         self.assertContains(response, 'class="project-card"', count=23)
-        self.assertContains(response, "Open GitHub project", count=23)
+        self.assertContains(response, "https://www.kaggle.com/competitions/titanic")
+        self.assertContains(response, "https://archive.ics.uci.edu/dataset/352/online+retail")
+        self.assertContains(response, "https://github.com/allisonhorst/palmerpenguins")
 
     def test_unknown_chapter_returns_404(self):
         self.assertEqual(self.client.get("/learn/not-a-chapter/").status_code, 404)

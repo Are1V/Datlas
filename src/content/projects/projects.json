@@ -12,7 +12,7 @@
     ],
     "problem": "Separate patterns in passenger survival from claims about causation.",
     "dataset": "Titanic passengers",
-    "datasetUrl": "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/titanic.csv",
+    "datasetUrl": "https://www.kaggle.com/competitions/titanic",
     "output": "An illustrated notebook and a one-page findings report.",
     "evaluation": "Validate denominators, show missingness, and report survival rates with uncertainty.",
     "objectives": [
@@ -56,7 +56,7 @@
     ],
     "problem": "Explore how body measurements vary across penguin species and islands.",
     "dataset": "Palmer penguins",
-    "datasetUrl": "https://raw.githubusercontent.com/mwaskom/seaborn-data/master/penguins.csv",
+    "datasetUrl": "https://github.com/allisonhorst/palmerpenguins",
     "output": "A question-led EDA report with five annotated figures.",
     "evaluation": "Check sample sizes, missingness, and units; distinguish association from explanation.",
     "objectives": [
