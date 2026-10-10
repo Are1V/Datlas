@@ -144,6 +144,77 @@
   };
   projectSearch?.addEventListener("input", filterProjects);
 
+  const searchForm = document.querySelector("[data-search-form]");
+  const searchInput = document.querySelector("[data-search-query]");
+  const searchResults = document.querySelector("[data-search-results]");
+  const searchCount = document.querySelector("[data-search-count]");
+  const searchCatalogElement = document.querySelector("#datlas-search-catalog");
+
+  if (searchForm && searchInput && searchResults && searchCount && searchCatalogElement) {
+    let searchCatalog = [];
+    try {
+      searchCatalog = JSON.parse(searchCatalogElement.textContent);
+    } catch {
+      searchCatalog = [];
+    }
+
+    const homeUrl = document.querySelector(".brand")?.href || `${window.location.origin}/`;
+    const resultUrl = (item) => item.external
+      ? item.url
+      : new URL(item.url.replace(/^\/+/, ""), homeUrl).toString();
+
+    const renderSearch = (value, updateAddress = false) => {
+      const query = value.trim();
+      const needle = query.toLocaleLowerCase();
+      const matches = needle
+        ? searchCatalog.filter((item) => item.search.toLocaleLowerCase().includes(needle)).slice(0, 60)
+        : [];
+
+      searchResults.replaceChildren();
+      searchCount.hidden = !query;
+      searchCount.textContent = query ? `${matches.length} results for “${query}”` : "";
+
+      if (query && !matches.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No match yet. Try a shorter or broader term.";
+        searchResults.append(empty);
+      }
+
+      matches.forEach((item) => {
+        const link = document.createElement("a");
+        link.href = resultUrl(item);
+        if (item.external) {
+          link.target = "_blank";
+          link.rel = "noreferrer";
+        }
+        const kind = document.createElement("span");
+        kind.textContent = item.kind;
+        const title = document.createElement("strong");
+        title.textContent = item.title;
+        const arrow = document.createElement("b");
+        arrow.textContent = item.external ? "↗" : "→";
+        link.append(kind, title, arrow);
+        searchResults.append(link);
+      });
+
+      if (updateAddress) {
+        const url = new URL(window.location.href);
+        query ? url.searchParams.set("q", query) : url.searchParams.delete("q");
+        window.history.replaceState({}, "", url);
+      }
+    };
+
+    const initialQuery = new URLSearchParams(window.location.search).get("q") || searchInput.value;
+    searchInput.value = initialQuery;
+    renderSearch(initialQuery);
+    searchForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      renderSearch(searchInput.value, true);
+    });
+    searchInput.addEventListener("input", () => renderSearch(searchInput.value, true));
+  }
+
   renderProgress();
   filterRoadmap();
   filterProjects();

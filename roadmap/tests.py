@@ -4,7 +4,7 @@ from django.core.management import call_command
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from .services import curriculum, projects, search, stages
+from .services import curriculum, projects, search, search_catalog, stages
 
 
 class ContentTests(SimpleTestCase):
@@ -29,6 +29,13 @@ class ContentTests(SimpleTestCase):
     def test_search_finds_topics_and_projects(self):
         self.assertTrue(any(item["title"] == "Transformers" for item in search("transformers")))
         self.assertTrue(any(item["kind"] == "Project" for item in search("Titanic")))
+
+    def test_browser_search_catalog_contains_all_content_types(self):
+        catalog = search_catalog()
+        self.assertEqual(len(catalog), 38 + 676 + 23)
+        self.assertTrue(any(item["kind"] == "Chapter" for item in catalog))
+        self.assertTrue(any(item["kind"] == "Project" for item in catalog))
+        self.assertTrue(any(item["title"] == "Transformers" for item in catalog))
 
 
 @override_settings(SECURE_SSL_REDIRECT=False)
@@ -70,6 +77,12 @@ class PageTests(SimpleTestCase):
         self.assertContains(response, "data-project-search")
         self.assertContains(response, "data-project-card", count=23)
 
+    def test_search_page_embeds_catalog_for_static_hosting(self):
+        response = self.client.get(reverse("roadmap:search"))
+        self.assertContains(response, 'id="datlas-search-catalog"')
+        self.assertContains(response, "Transformers")
+        self.assertContains(response, "Titanic survival analysis")
+
     def test_project_cards_link_to_external_sources(self):
         response = self.client.get(reverse("roadmap:projects"))
         self.assertContains(response, 'class="project-card"', count=23)
@@ -93,3 +106,6 @@ class StaticExportTests(SimpleTestCase):
             self.assertTrue((root / "static" / "roadmap" / "site.css").exists())
             self.assertTrue((root / "static" / "roadmap" / "site.js").exists())
             self.assertTrue((root / "404.html").exists())
+            search_page = (root / "search" / "index.html").read_text(encoding="utf-8")
+            self.assertIn('id="datlas-search-catalog"', search_page)
+            self.assertIn("Titanic survival analysis", search_page)

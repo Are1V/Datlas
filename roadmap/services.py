@@ -89,19 +89,52 @@ def find_phase(slug):
     return next((phase for phase in curriculum() if phase["id"] == slug), None)
 
 
+@lru_cache(maxsize=1)
+def search_catalog():
+    results = []
+    for phase in curriculum():
+        results.append(
+            {
+                "title": phase["title"],
+                "kind": "Chapter",
+                "url": f"/learn/{phase['id']}/",
+                "search": " ".join(
+                    [phase["title"], phase["subtitle"], phase["description"]]
+                ),
+            }
+        )
+        for topic in phase["topics"]:
+            results.append(
+                {
+                    "title": topic["title"],
+                    "kind": phase["title"],
+                    "url": f"/learn/{phase['id']}/#{topic['id']}",
+                    "search": f"{topic['title']} {topic['summary']} {phase['title']}",
+                }
+            )
+    for project in projects():
+        results.append(
+            {
+                "title": project["title"],
+                "kind": "Project",
+                "url": project["external_url"],
+                "external": True,
+                "search": " ".join(
+                    [
+                        project["title"],
+                        project["problem"],
+                        project["dataset"],
+                        project["platform"],
+                        *project["objectives"],
+                    ]
+                ),
+            }
+        )
+    return results
+
+
 def search(query):
     needle = query.casefold().strip()
     if not needle:
         return []
-    results = []
-    for phase in curriculum():
-        if needle in phase["title"].casefold():
-            results.append({"title": phase["title"], "kind": "Chapter", "url": f"/learn/{phase['id']}/"})
-        for topic in phase["topics"]:
-            haystack = f"{topic['title']} {topic['summary']}".casefold()
-            if needle in haystack:
-                results.append({"title": topic["title"], "kind": phase["title"], "url": f"/learn/{phase['id']}/#{topic['id']}"})
-    for project in projects():
-        if needle in f"{project['title']} {project['problem']}".casefold():
-            results.append({"title": project["title"], "kind": "Project", "url": project["external_url"], "external": True})
-    return results[:60]
+    return [item for item in search_catalog() if needle in item["search"].casefold()][:60]

@@ -1,7 +1,7 @@
 from django.http import Http404
 from django.shortcuts import render
 
-from .services import curriculum, find_phase, projects, search, stages
+from .services import curriculum, find_phase, projects, search, search_catalog, stages
 
 
 def home(request):
@@ -41,7 +41,16 @@ def project_list(request):
 
 def search_view(request):
     query = request.GET.get("q", "")
-    return render(request, "roadmap/search.html", {"active": "search", "query": query, "results": search(query)})
+    return render(
+        request,
+        "roadmap/search.html",
+        {
+            "active": "search",
+            "query": query,
+            "results": search(query),
+            "search_catalog": search_catalog(),
+        },
+    )
 
 
 def about(request):
