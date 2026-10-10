@@ -4,7 +4,7 @@
 <section class="page-hero shell compact">
   <div class="signal"><span></span> Real data · Verifiable results</div>
   <h1>Build work worth<br><span>showing.</span></h1>
-  <p>Every card opens the real dataset or project source on GitHub, Kaggle, UCI, Hugging Face, or its official home.</p>
+  <p>Every card opens its complete GitHub project guide with the dataset, objectives, deliverables, evaluation, and repository structure.</p>
 </section>
 <section class="project-grid shell">
   {% for project in projects %}
@@ -14,7 +14,7 @@
     <h2>{{ project.title }}</h2>
     <p>{{ project.problem }}</p>
     <div class="project-tags">{% for objective in project.objectives %}<span>{{ objective }}</span>{% endfor %}</div>
-    <div class="project-open">Open project source <b>↗</b></div>
+    <div class="project-open">Open GitHub project <b>↗</b></div>
   </a>
   {% endfor %}
 </section>

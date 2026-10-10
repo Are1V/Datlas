@@ -6,6 +6,7 @@ from urllib.parse import urlparse
 from django.conf import settings
 
 DATA_ROOT = settings.BASE_DIR / "src"
+PROJECT_REPOSITORY_ROOT = "https://github.com/Are1V/Datlas/tree/main/project-guides"
 
 STAGE_DEFINITIONS = [
     ("Start", [0, 1, 2, 3]),
@@ -45,8 +46,8 @@ def curriculum():
 def projects():
     items = _read(DATA_ROOT / "content" / "projects" / "projects.json")
     for item in items:
-        item["external_url"] = item["datasetUrl"]
-        item["platform"] = platform_name(item["external_url"])
+        item["external_url"] = f"{PROJECT_REPOSITORY_ROOT}/{item['id']}"
+        item["platform"] = "GitHub project"
     return items
 
 
