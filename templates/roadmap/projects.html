@@ -6,9 +6,14 @@
   <h1>Build work worth<br><span>showing.</span></h1>
   <p>Every card opens the real dataset or project source on Kaggle, GitHub, UCI, OpenML, or the original publisher.</p>
 </section>
+<section class="project-tools shell" aria-label="Filter projects">
+  <label><span>Find a project</span><input type="search" data-project-search placeholder="Search by skill, dataset, or platform…" autocomplete="off"></label>
+  <p><strong data-project-count>{{ projects|length }}</strong> projects available</p>
+  <p class="filter-empty" data-project-empty hidden>No projects match that search.</p>
+</section>
 <section class="project-grid shell">
   {% for project in projects %}
-  <a class="project-card" href="{{ project.external_url }}" target="_blank" rel="noreferrer">
+  <a class="project-card" data-project-card data-search="{{ project.title }} {{ project.platform }} {{ project.dataset }} {{ project.objectives|join:' ' }}" href="{{ project.external_url }}" target="_blank" rel="noreferrer">
     <div class="project-number">{{ forloop.counter|stringformat:'02d' }}</div>
     <div class="project-source"><span></span>{{ project.platform }}</div>
     <h2>{{ project.title }}</h2>

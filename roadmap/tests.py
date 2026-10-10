@@ -49,6 +49,22 @@ class PageTests(SimpleTestCase):
         for slug in ["python-foundations", "numpy-pandas", "machine-learning-foundations", "large-language-models"]:
             self.assertContains(response, reverse("roadmap:chapter", args=[slug]))
 
+    def test_roadmap_renders_progress_and_filter_controls(self):
+        response = self.client.get(reverse("roadmap:roadmap"))
+        self.assertContains(response, "data-phase-card", count=38)
+        self.assertContains(response, "data-roadmap-search")
+        self.assertContains(response, "data-progress-reset")
+
+    def test_chapter_renders_topic_progress_controls(self):
+        response = self.client.get(reverse("roadmap:chapter", args=["python-foundations"]))
+        self.assertContains(response, 'class="topic-check"', count=33)
+        self.assertContains(response, "data-chapter-progress")
+
+    def test_projects_render_filter_control(self):
+        response = self.client.get(reverse("roadmap:projects"))
+        self.assertContains(response, "data-project-search")
+        self.assertContains(response, "data-project-card", count=23)
+
     def test_project_cards_link_to_external_sources(self):
         response = self.client.get(reverse("roadmap:projects"))
         self.assertContains(response, 'class="project-card"', count=23)
@@ -70,4 +86,5 @@ class StaticExportTests(SimpleTestCase):
             self.assertTrue((root / "roadmap" / "index.html").exists())
             self.assertTrue((root / "learn" / "large-language-models" / "index.html").exists())
             self.assertTrue((root / "static" / "roadmap" / "site.css").exists())
+            self.assertTrue((root / "static" / "roadmap" / "site.js").exists())
             self.assertTrue((root / "404.html").exists())

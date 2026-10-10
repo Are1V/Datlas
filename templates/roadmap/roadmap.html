@@ -6,6 +6,19 @@
   <h1>Your map through<br><span>data science.</span></h1>
   <p>Open a chapter, choose a topic, watch the focused lesson, and practice the idea.</p>
 </section>
+<section class="roadmap-tools shell" aria-label="Roadmap progress and filters">
+  <div class="progress-overview">
+    <div class="progress-copy"><span class="kicker">YOUR PROGRESS</span><strong data-roadmap-progress>0 of 38 chapters</strong><span class="progress-meta"><small>Saved on this device</small><button type="button" data-progress-reset>Reset</button></span></div>
+    <div class="progress-track" aria-hidden="true"><span data-roadmap-progress-bar></span></div>
+  </div>
+  <label class="roadmap-search"><span>Search chapters</span><input type="search" data-roadmap-search placeholder="Try Python, statistics, LLMs…" autocomplete="off"></label>
+  <div class="roadmap-filters" role="group" aria-label="Filter chapters by progress">
+    <button type="button" class="is-active" data-roadmap-filter="all" aria-pressed="true">All</button>
+    <button type="button" data-roadmap-filter="open" aria-pressed="false">To learn</button>
+    <button type="button" data-roadmap-filter="complete" aria-pressed="false">Completed</button>
+  </div>
+  <p class="filter-empty" data-roadmap-empty hidden>No chapters match this filter.</p>
+</section>
 <div class="stage-jump shell" aria-label="Roadmap sections">
   {% for stage in stages %}<a href="#stage-{{ stage.number }}"><span>{{ stage.number }}</span>{{ stage.name }}</a>{% endfor %}
 </div>
@@ -16,12 +29,14 @@
     <div class="stage-line"></div>
     <div class="phase-grid">
       {% for phase in stage.phases %}
-      <a class="phase-card" href="{% url 'roadmap:chapter' phase.id %}">
-        <div><span>{{ phase.chapter }}</span><span>{{ phase.topics|length }} topics</span></div>
+      <article class="phase-card" data-phase-card data-search="{{ stage.name }} {{ phase.title }} {{ phase.subtitle }}">
+        <a class="phase-card-link" href="{% url 'roadmap:chapter' phase.id %}" aria-label="Open {{ phase.title }}"></a>
+        <div class="phase-meta"><span>{{ phase.chapter }}</span><span>{{ phase.topics|length }} topics</span></div>
         <h3>{{ phase.title }}</h3>
         <p>{{ phase.subtitle }}</p>
         <b>Open chapter <span>→</span></b>
-      </a>
+        <button class="completion-toggle" type="button" data-progress-id="chapter:{{ phase.id }}" aria-label="Mark {{ phase.title }} complete" aria-pressed="false"><span class="check-icon">✓</span><span class="progress-label">Mark done</span></button>
+      </article>
       {% endfor %}
     </div>
   </section>
