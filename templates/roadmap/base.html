@@ -27,10 +27,6 @@
       <a href="{% url 'roadmap:about' %}" {% if active == 'about' %}aria-current="page"{% endif %}>About</a>
     </nav>
     <div class="header-actions">
-      <form class="header-search" action="{% url 'roadmap:search' %}" role="search">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5"/></svg>
-        <input name="q" aria-label="Search the roadmap" placeholder="Search topics">
-      </form>
       <a class="github-link" href="{{ github_url }}" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
       <details class="mobile-nav">
         <summary aria-label="Open navigation"><span></span><span></span><span></span></summary>

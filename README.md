@@ -9,10 +9,9 @@ Datlas is a server-rendered Django learning platform with 38 connected chapters,
 - Python 3.12
 - Django 5
 - Django templates and modern CSS
-- WhiteNoise for static assets
-- Gunicorn for production
+- A Python static exporter for GitHub Pages
 
-The application has no Node.js, React, Astro, or frontend build step.
+The application has no Node.js, React, Astro, or frontend build step. Django renders every page during deployment and GitHub Pages serves the exported HTML.
 
 ## Local development
 
@@ -30,7 +29,7 @@ Run the checks with:
 ```sh
 python manage.py check
 python manage.py test
-python manage.py collectstatic --noinput
+python manage.py export_static --output site --base-path /Datlas/
 ```
 
 ## Content
@@ -43,11 +42,9 @@ python manage.py collectstatic --noinput
 | `src/content/projects/projects.json` | Project briefs and external sources |
 | `roadmap/services.py` | Content loading, stages, project platforms, and search |
 
-## Deploy to Render
+## GitHub Pages
 
-The included `render.yaml` defines the web service. In Render, create a new Blueprint from this repository. Render installs the requirements, collects static files, and starts Gunicorn automatically.
-
-Django needs a running Python server and cannot run on GitHub Pages.
+Pushes to `main` run Django checks, render all routes into static HTML, and deploy the result through GitHub Actions. The public site is available at `https://are1v.github.io/Datlas/`.
 
 ## License
 

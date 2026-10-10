@@ -1,5 +1,8 @@
 from django.test import SimpleTestCase, override_settings
 from django.urls import reverse
+from django.core.management import call_command
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
 from .services import curriculum, projects, search, stages
 
@@ -46,3 +49,16 @@ class PageTests(SimpleTestCase):
 
     def test_unknown_chapter_returns_404(self):
         self.assertEqual(self.client.get("/learn/not-a-chapter/").status_code, 404)
+
+
+class StaticExportTests(SimpleTestCase):
+    def test_export_builds_github_pages_with_repository_prefix(self):
+        with TemporaryDirectory() as directory:
+            call_command("export_static", output=directory, base_path="/Datlas/", verbosity=0)
+            root = Path(directory)
+            homepage = (root / "index.html").read_text(encoding="utf-8")
+            self.assertIn('href="/Datlas/roadmap/"', homepage)
+            self.assertTrue((root / "roadmap" / "index.html").exists())
+            self.assertTrue((root / "learn" / "large-language-models" / "index.html").exists())
+            self.assertTrue((root / "static" / "roadmap" / "site.css").exists())
+            self.assertTrue((root / "404.html").exists())
