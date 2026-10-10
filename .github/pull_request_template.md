@@ -7,6 +7,6 @@ Describe the problem and the resulting behavior or explanation.
 Link primary sources for content corrections. Describe the relevant checks and their results.
 
 - [ ] Existing progress IDs are preserved.
-- [ ] Content, types, lint, and build pass.
+- [ ] Django checks and tests pass.
 - [ ] Relevant links and interactive behavior checked.
-- [ ] Mobile and both themes checked if UI changes.
+- [ ] Phone, tablet, and desktop layouts checked if the interface changed.

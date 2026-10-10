@@ -14,10 +14,12 @@ Preserve existing topic IDs so shared chapter links remain stable. Keep explanat
 ## Development checks
 
 ```sh
+python3 -m venv .venv
+source .venv/bin/activate
 pip install -r requirements.txt
 python manage.py check
 python manage.py test
-python manage.py collectstatic --noinput
+python manage.py export_static --output site --base-path /Datlas/
 ```
 
 Do not commit credentials, virtual environments, SQLite databases, collected static files, or downloaded course content.
